@@ -1,0 +1,33 @@
+{
+    "categories": [
+        {
+            "name": "Planned",
+            "list_items": [
+                {
+                    "text": "testing"
+                },
+                {
+                    "text": "other test"
+                }
+            ]
+        },
+        {
+            "name": "In Progress",
+            "list_items": [
+                {
+                    "text": "testing moar"
+                }
+            ]
+        },
+        {
+            "name": "Finished",
+            "list_items": [
+            ]
+        },
+        {
+            "name": "Known Bugs",
+            "list_items": [
+            ]
+        }
+    ]
+}
