@@ -1,6 +1,8 @@
 function assembleLists() {
+    // URL for board data API
+    var api_url = 'http://localhost:8124/api/boards/4fff2b64349066e23b000004';
     // Ajax request for the json file with our data
-    var jqxhr = $.getJSON('board_data', function(board_data) {
+    var jqxhr = $.getJSON(api_url, function(board_data) {
         // Mustache template
         var template = $('#board_lists_template').html();
         // Creates Mustache rendered html to pop into the board_lists div
