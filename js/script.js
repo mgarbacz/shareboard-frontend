@@ -1,9 +1,10 @@
 // URL for board data API
-var api_url = 'http://localhost:8124/boards/4fffb859dfaf22fc01000005';
+var api_url_base = 'http://localhost:8124/boards'
+var api_url_board = 'http://localhost:8124/boards/4fffb859dfaf22fc01000005';
 
 function pushUpdateToAPI(board_data) {
     var jqxhr = $.ajax({
-        url: api_url,
+        url: api_url_board,
         type: "PUT",
         data: board_data
     });
@@ -45,7 +46,7 @@ function removeItemJSON(board_data, list_name, item_text) {
 
 function assembleLists() {
     // Ajax request for the json file with our data
-    var jqxhr = $.getJSON(api_url, function(board_data) {
+    var jqxhr = $.getJSON(api_url_board, function(board_data) {
         // Mustache template
         var template = $('#board_lists_template').html();
         // Creates Mustache rendered html to pop into the board_lists div
@@ -61,7 +62,7 @@ function assembleLists() {
                   });
 
         // Iterates over all list items added from data
-        $('li').each(function() {
+        $('.list li').each(function() {
             makeListItemDraggable(this);
         });
 
