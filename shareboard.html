@@ -13,29 +13,32 @@
     <script type="text/javascript" src="js/script.js"></script>
     <link rel="stylesheet" href="css/bootstrap.css"/>
     <link rel="stylesheet" href="css/style.css"/>
-</head>
-<body>
-    <div class="container">
-        <div id="board_lists" class="row">
-            <script id="board_lists_template" type="text/template">
-                {{#lists}}
-                <div class="list span3">
-                    <h1>{{name}}</h1>
-                    <ul>
-                        {{#list_items}}
-                        <li>{{text}}</li>
-                        {{/list_items}}
-                    </ul>
-                    <div class="input-append">
-                        <input class="span2 float-fix" type="text">
+    <script id="board_lists_template" type="text/template">
+        <div id="{{_id}}" class="board_lists row">
+            {{#lists}}
+            <div class="list span3">
+                <h1>{{name}}</h1>
+                <ul>
+                    {{#items}}
+                    <li>
+                        <span>{{text}}</span>
+                        <i class="icon-remove"></i>
+                    </li>
+                    {{/items}}
+                </ul>
+                <div class="input-append">
+                    <input class="span2 float-fix" type="text">
                         <span class="add-on">
                             <i class="icon-plus"></i>
                         </span>
-                    </div>
                 </div>
-                {{/lists}}
-            </script>
+            </div>
+            {{/lists}}
         </div>
+    </script>
+</head>
+<body>
+    <div class="container">
     </div>
 </body>
 </html>

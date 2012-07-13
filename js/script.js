@@ -1,19 +1,64 @@
+// URL for board data API
+var api_url = 'http://localhost:8124/boards/4fffa1932da586e700000003';
+
+function pushUpdateToAPI(board_data) {
+    var jqxhr = $.ajax({
+        url: api_url,
+        type: "PUT",
+        data: board_data
+    });
+    jqxhr.success(function() {
+        assembleLists();
+    });
+    jqxhr.error(function(board_data) {
+        alert('Problem with the data ' + board_data)
+    });
+}
+
+function addItemJSON(board_data, list_name, item_text) {
+    $.each(board_data.lists, function(key, val) {
+        if (val.name == list_name) {
+            if (board_data.lists[key].items instanceof Array) {
+                board_data.lists[key].items.push({text: item_text});
+            } else {
+                board_data.lists[key].items = [{text: item_text}];
+            }
+        }
+    });
+
+    return board_data;
+}
+
+function removeItemJSON(board_data, list_name, item_text) {
+    $.each(board_data.lists, function(key, val) {
+        if (val.name == list_name) {
+            $.each(board_data.lists[key].items, function(item_key, item_val) {
+                if(item_val.text == item_text) {
+                    board_data.lists[key].items.splice(item_key, 1);
+                }
+            });
+        }
+    });
+
+    return board_data;
+}
+
 function assembleLists() {
-    // URL for board data API
-    var api_url = 'http://localhost:8124/api/boards/4fff2b64349066e23b000004';
     // Ajax request for the json file with our data
     var jqxhr = $.getJSON(api_url, function(board_data) {
         // Mustache template
         var template = $('#board_lists_template').html();
         // Creates Mustache rendered html to pop into the board_lists div
         var view = Mustache.to_html(template, board_data);
-        $('#board_lists').append(view);
+        $('.container').html(view);
 
         // Makes all list divs drop-enabled locations
         $('.list').bind('dragenter', function(e) { handleDragEnter(e, this) })
                   .bind('dragleave', function(e) { handleDragLeave(e, this) })
                   .bind('dragover',  function(e) { handleDragOver(e, this) })
-                  .bind('drop',      function(e) { handleDrop(e, this) });
+                  .bind('drop', function(e) {
+                      handleDrop(e, this, board_data)
+                  });
 
         // Iterates over all list items added from data
         $('li').each(function() {
@@ -22,16 +67,22 @@ function assembleLists() {
 
         // Allows "+" button to create new list items to add to lists
         $('span.add-on').click(function() {
-            var input = $(this).parent().children('input');
-            var parent_list = $(this).parent().parent().children('ul');
 
-            parent_list.append('<li>' + input.val() + '</li>');
-            input.val(''); 
+            var item_text = $(this).parent().children('input').val();
+            var list_name = $(this).parent().parent().children('h1').text();
 
-            makeListItemDraggable(parent_list.children().last());
+            board_data = addItemJSON(board_data, list_name, item_text);
+            pushUpdateToAPI(board_data);
+
         });
-    })
-    .error(function(board_data) { 
+
+        $('input').keyup(function(event){
+            if(event.keyCode == 13){
+                $(this).parent().children('span').click();
+            }
+        });
+    });
+    jqxhr.error(function(board_data) {
         alert('Problem with the data ' + board_data)
     });
 }
@@ -47,12 +98,13 @@ function makeListItemDraggable(list_item) {
 function handleDragStart(e, list_item) {
     // Allows list_item to have its text information copied
     e.originalEvent.dataTransfer.effectAllowed = 'copy';
-    e.originalEvent.dataTransfer.setData('text', $(list_item).text());
+    e.originalEvent.dataTransfer.setData('text',
+        $(list_item).children('span').text() + '|'
+        + $(list_item).parent().parent().children('h1').text());
 }
 
 function handleDragEnd(e, list_item) {
-    // Removes list_item from its starting point
-    $(list_item).remove();
+    //handle it!
 }
 
 function handleDragEnter(e, list) {
@@ -69,17 +121,28 @@ function handleDragOver(e, list) {
         e.originalEvent.preventDefault();
 }
 
-function handleDrop(e, list) {
+function handleDrop(e, list, board_data) {
     // Stops default browser redirect on drop event
     if (e.originalEvent.stopPropagation)
         e.originalEvent.stopPropagation();
     if (e.originalEvent.preventDefault)
         e.originalEvent.preventDefault();
 
+    var item_text = e.originalEvent.dataTransfer.
+        getData('text').split('|')[0];
+    var org_list_name = e.originalEvent.dataTransfer.
+        getData('text').split('|')[1];
+    var des_list_name = $(list).children('h1').text();
+
+    board_data = removeItemJSON(board_data, org_list_name, item_text);
+    board_data = addItemJSON(board_data, des_list_name, item_text);
+    pushUpdateToAPI(board_data);
+/*
     // Appends the list item we have data for to the list we dropped on
     $(list).children('ul').append(
             '<li>'+ e.originalEvent.dataTransfer.getData('text') + '</li>');
     makeListItemDraggable($(list).children('ul').children('li').last());
+    */
 }
 
 $(document).ready(function() {
