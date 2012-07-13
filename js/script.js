@@ -1,5 +1,5 @@
 // URL for board data API
-var api_url = 'http://localhost:8124/boards/4fffa1932da586e700000003';
+var api_url = 'http://localhost:8124/boards/4fffb859dfaf22fc01000005';
 
 function pushUpdateToAPI(board_data) {
     var jqxhr = $.ajax({
@@ -76,10 +76,24 @@ function assembleLists() {
 
         });
 
+        // Reading enter key press for item inputs
         $('input').keyup(function(event){
             if(event.keyCode == 13){
                 $(this).parent().children('span').click();
             }
+        });
+
+        $('i.remove_item').click(function() {
+
+            var item_text = $(this).parent().children('span').text();
+            var list_name
+                = $(this).parent().parent().parent().children('h1').text();
+
+            alert(item_text);
+
+            board_data = removeItemJSON(board_data, list_name, item_text);
+            pushUpdateToAPI(board_data);
+
         });
     });
     jqxhr.error(function(board_data) {
