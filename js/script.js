@@ -89,8 +89,6 @@ function assembleLists() {
             var list_name
                 = $(this).parent().parent().parent().children('h1').text();
 
-            alert(item_text);
-
             board_data = removeItemJSON(board_data, list_name, item_text);
             pushUpdateToAPI(board_data);
 

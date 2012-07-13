@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="css/bootstrap.css"/>
     <link rel="stylesheet" href="css/style.css"/>
     <script id="board_lists_template" type="text/template">
-        <div class="navbar">
+        <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
                     <a class="brand" href="#">{{name}}</a>
@@ -32,13 +32,13 @@
                         </li>
                         <li>
                             <a href="#">
-                                <i class="icon-book icon-white"></i>
+                                <i class="icon-file icon-white"></i>
                                 New Board
                             </a>
                         </li>
                         <li>
                             <a href="#">
-                                <i class="icon-plus icon-white"></i>
+                                <i class="icon-list-alt icon-white"></i>
                                 Add List
                             </a>
                         </li>
@@ -58,20 +58,58 @@
                 <h1>{{name}}</h1>
                 <ul>
                     {{#items}}
-                    <li>
+                    <li class="items">
                         <span>{{text}}</span>
-                        <i class="icon-remove remove_item cursor_pointer"></i>
+                        <i class="icon-remove remove_item cursor_pointer"
+                           title="Delete"></i>
+                        <i class="icon-edit edit_item cursor_pointer"
+                           title="Edit"></i>
                     </li>
                     {{/items}}
                 </ul>
                 <div class="input-append">
-                    <input class="float-fix" type="text">
-                        <span class="add-on cursor_pointer">
-                            <i class="icon-plus"></i>
-                        </span>
+                    <input class="span2 float_fix" type="text">
+                    <span class="add-on cursor_pointer">
+                        <i class="icon-plus"></i>
+                    </span>
                 </div>
             </div>
             {{/lists}}
+        </div>
+        <div class="navbar navbar-fixed-bottom">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="#">Members</a>
+                    <ul class="nav">
+                        <li>
+                            <a href="#">
+                                <img src="img/mg.png" title="Michal Garbacz" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="img/user.png" title="User 1" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="img/user.png" title="User 2" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="img/user.png" title="User 3" />
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="icon-user icon-white"></i>
+                                Add Member
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </script>
 </head>
