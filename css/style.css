@@ -36,7 +36,12 @@ input.float_fix {
     border-radius: 2px;
 }
 
-.items>i {
+.items > i {
+    float:right;
+}
+
+.remove_list {
+    margin-right:5px;
     float:right;
 }
 

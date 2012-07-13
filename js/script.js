@@ -1,18 +1,33 @@
 // URL for board data API
-var api_url_base = 'http://localhost:8124/boards'
-var api_url_board = 'http://localhost:8124/boards/4fffb859dfaf22fc01000005';
+var api_base = 'http://localhost:8124/boards'
+var api_board = '/4fffb859dfaf22fc01000005';
 
 function pushUpdateToAPI(board_data) {
     var jqxhr = $.ajax({
-        url: api_url_board,
+        url: api_base + api_board,
         type: "PUT",
         data: board_data
     });
     jqxhr.success(function() {
         assembleLists();
     });
-    jqxhr.error(function(board_data) {
-        alert('Problem with the data ' + board_data)
+    jqxhr.error(function(data) {
+        alert('Problem with the data ' + data)
+    });
+}
+
+function addBoardJSON(board_data) {
+    var jqxhr = $.ajax({
+        url: api_base,
+        type: "POST",
+        data: board_data
+    });
+    jqxhr.success(function(data) {
+        api_board = '/' + data._id;
+        assembleLists();
+    });
+    jqxhr.error(function(data) {
+        alert('Problem with the data ' + data);
     });
 }
 
@@ -44,9 +59,29 @@ function removeItemJSON(board_data, list_name, item_text) {
     return board_data;
 }
 
+function addListJSON(board_data, list_name) {
+    if (board_data.lists instanceof Array) {
+        board_data.lists.push({name: list_name, items: ''});
+    } else {
+        board_data.lists = [{name: list_name, items: ''}];
+    }
+
+    return board_data;
+}
+
+function removeListJSON(board_data, list_name) {
+    $.each(board_data.lists, function(key, val) {
+        if (val.name == list_name) {
+            board_data.lists.splice(key, 1);
+        }
+    });
+
+    return board_data;
+}
+
 function assembleLists() {
     // Ajax request for the json file with our data
-    var jqxhr = $.getJSON(api_url_board, function(board_data) {
+    var jqxhr = $.getJSON(api_base + api_board, function(board_data) {
         // Mustache template
         var template = $('#board_lists_template').html();
         // Creates Mustache rendered html to pop into the board_lists div
@@ -78,7 +113,7 @@ function assembleLists() {
         });
 
         // Reading enter key press for item inputs
-        $('input').keyup(function(event){
+        $('.input-append input').keyup(function(event){
             if(event.keyCode == 13){
                 $(this).parent().children('span').click();
             }
@@ -94,6 +129,37 @@ function assembleLists() {
             pushUpdateToAPI(board_data);
 
         });
+
+        $('#add_list_submit').click(function() {
+            board_data = addListJSON(board_data, $('#add_list_input').val());
+            pushUpdateToAPI(board_data);
+        });
+
+        $('#add_list_input').keyup(function(event){
+            if(event.keyCode == 13){
+                $('#add_list_submit').click();
+            }
+        });
+
+        /*
+        $('#remove_list_submit').click(function() {
+            board_data = removeListJSON(board_data, $(''));
+            pushUpdateToAPI(board_data);
+        });
+        */
+
+        $('#add_board_submit').click(function() {
+            var list_name = $('#add_board_input').val();
+            board_data = { "name": list_name, "lists": [] };
+            addBoardJSON(board_data);
+        });
+
+        $('#add_board_input').keyup(function(event){
+            if(event.keyCode == 13){
+                $('#add_board_submit').click();
+            }
+        });
+
     });
     jqxhr.error(function(board_data) {
         alert('Problem with the data ' + board_data)
